@@ -40,8 +40,11 @@ class GroundedSAM(DetectionBaseModel):
         self.box_threshold = box_threshold
         self.text_threshold = text_threshold
 
-    def predict(self, input: str) -> sv.Detections:
-        image = cv2.imread(input)
+    def predict(self, input) -> sv.Detections:
+        if type(input) == np.ndarray:
+            image = input
+        elif type(input) == str:
+            image = cv2.imread(input)
 
         # GroundingDINO predictions
         detections_list = []
