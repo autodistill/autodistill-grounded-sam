@@ -5,25 +5,25 @@ os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":16:8"
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 import torch
-import cv2
 
 torch.use_deterministic_algorithms(False)
 
+from typing import Any
+
+import numpy as np
 import supervision as sv
+from autodistill_grounded_sam.helpers import (combine_detections,
+                                              load_grounding_dino,
+                                              load_SAM)
+from autodistill.helpers import load_image
 from groundingdino.util.inference import Model
 from segment_anything import SamPredictor
 
-import numpy as np
 from autodistill.detection import CaptionOntology, DetectionBaseModel
-
-from autodistill_grounded_sam.helpers import (
-    combine_detections,
-    load_grounding_dino,
-    load_SAM
-)
 
 HOME = os.path.expanduser("~")
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 @dataclass
 class GroundedSAM(DetectionBaseModel):
@@ -33,15 +33,17 @@ class GroundedSAM(DetectionBaseModel):
     box_threshold: float
     text_threshold: float
 
-    def __init__(self, ontology: CaptionOntology, box_threshold=0.35, text_threshold=0.25):
+    def __init__(
+        self, ontology: CaptionOntology, box_threshold=0.35, text_threshold=0.25
+    ):
         self.ontology = ontology
         self.grounding_dino_model = load_grounding_dino()
         self.sam_predictor = load_SAM()
         self.box_threshold = box_threshold
         self.text_threshold = text_threshold
 
-    def predict(self, input: str) -> sv.Detections:
-        image = cv2.imread(input)
+    def predict(self, input: Any) -> sv.Detections:
+        image = load_image(input, return_format="cv2")
 
         # GroundingDINO predictions
         detections_list = []
