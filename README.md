@@ -19,6 +19,9 @@ Read the full [Autodistill documentation](https://autodistill.github.io/autodist
 
 Read the [GroundedSAM Autodistill documentation](https://autodistill.github.io/autodistill/base_models/groundedsam/).
 
+> [!TIP]
+> You can use Autodistill Grounded SAM on your own hardware using the instructions below, or use the [Roboflow hosted version of Autodistill](https://blog.roboflow.com/launch-auto-label/) to label images in the cloud.
+
 ## Installation
 
 To use the GroundedSAM Base Model, simply install it along with a Target Model supporting the `detection` task:
