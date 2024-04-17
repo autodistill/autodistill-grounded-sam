@@ -21,6 +21,8 @@ from segment_anything import SamPredictor
 
 from autodistill.detection import CaptionOntology, DetectionBaseModel
 
+from supervision.detection.utils import mask_to_xyxy
+
 HOME = os.path.expanduser("~")
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -76,6 +78,9 @@ class GroundedSAM(DetectionBaseModel):
             result_masks.append(masks[index])
 
         detections.mask = np.array(result_masks)
+
+        # override GroundingDINO bboxes with calculated masks bboxes
+        detections.xyxy = mask_to_xyxy(detections.mask)
 
         # separate in supervision to combine detections and override class_ids
         return detections
